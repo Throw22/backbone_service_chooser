@@ -35,6 +35,10 @@ $(function() {
         return 'None';
       } else if (selected.length === 1) {
         return selected[0].attributes.title;
+      } else if (selected.length === 2) {
+        return (
+          selected[0].attributes.title + ' and ' + selected[1].attributes.title
+        );
       } else {
         for (let i = 0; i < selected.length - 1; i++) {
           selectedStr += selected[i].attributes.title + ', ';
