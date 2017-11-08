@@ -24,6 +24,24 @@ $(function() {
     // Return an array only with the checked services
     getChecked: function() {
       return this.where({ checked: true });
+    },
+
+    // Return a grammatically correct string of selected services
+    getServicesString: function() {
+      let selected = this.getChecked();
+      let selectedStr = '';
+
+      if (!selected.length) {
+        return 'None';
+      } else if (selected.length === 1) {
+        return selected[0].attributes.title;
+      } else {
+        for (let i = 0; i < selected.length - 1; i++) {
+          selectedStr += selected[i].attributes.title + ', ';
+        }
+        return (selectedStr +=
+          'and ' + selected[selected.length - 1].attributes.title);
+      }
     }
   });
 
@@ -37,6 +55,7 @@ $(function() {
   ]);
 
   // This view turns a Service model into HTML. Will create LI elements.
+
   var ServiceView = Backbone.View.extend({
     tagName: 'li',
 
@@ -84,6 +103,7 @@ $(function() {
       // Cache these selectors
       this.total = $('#total span');
       this.list = $('#services');
+      this.selected = $('#selected span');
 
       // Listen for the change event on the collection.
       // This is equivalent to listening on every one of the
@@ -104,13 +124,16 @@ $(function() {
       // the prices of only the checked elements
 
       var total = 0;
+      var selected = [];
 
       _.each(services.getChecked(), function(elem) {
         total += elem.get('price');
+        selected.push(elem.get('title'));
       });
 
-      // Update the total price
+      // Update the total price and list of services
       this.total.text('$' + total);
+      this.selected.text(services.getServicesString());
 
       return this;
     }
